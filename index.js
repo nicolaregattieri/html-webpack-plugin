@@ -17,7 +17,7 @@ const _ = require('lodash');
 const path = require('path');
 const loaderUtils = require('loader-utils');
 
-const { createHtmlTagObject, htmlTagObjectToString } = require('./lib/html-tags');
+const { createHtmlTagObject, htmlTagObjectToString, HtmlTagArray } = require('./lib/html-tags');
 
 const childCompiler = require('./lib/compiler.js');
 const prettyError = require('./lib/errors.js');
@@ -851,17 +851,13 @@ class HtmlWebpackPlugin {
    */
   prepareAssetTagGroupForRendering (assetTagGroup) {
     const xhtml = this.options.xhtml;
-    const preparedTags = assetTagGroup.map((assetTag) => {
+    return HtmlTagArray.from(assetTagGroup.map((assetTag) => {
       const copiedAssetTag = Object.assign({}, assetTag);
       copiedAssetTag.toString = function () {
         return htmlTagObjectToString(this, xhtml);
       };
       return copiedAssetTag;
-    });
-    preparedTags.toString = function () {
-      return this.join('');
-    };
-    return preparedTags;
+    }));
   }
 
   /**
